@@ -816,6 +816,14 @@ local function New(Class, Properties)
     for Property, Value in Properties do
         if typeof(Value) == "function" then
             Instance[Property] = Value()
+        elseif typeof(Value) == "string" then
+            -- Check if it's a scheme value reference
+            local SchemeValue = GetSchemeValue(Value)
+            if SchemeValue ~= nil then
+                Instance[Property] = SchemeValue
+            else
+                Instance[Property] = Value
+            end
         else
             Instance[Property] = Value
         end
@@ -1682,7 +1690,11 @@ Library.Notify = Library.Notify
 Library.Toggle = Library.Toggle
 
 -- Ensure Options and Toggles are properly initialized
-Library.Options = Library.Options or Options
-Library.Toggles = Library.Toggles or Toggles
+if not Library.Options then
+    Library.Options = Options
+end
+if not Library.Toggles then
+    Library.Toggles = Toggles
+end
 
 return Library
