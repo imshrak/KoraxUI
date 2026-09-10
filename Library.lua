@@ -117,40 +117,40 @@ local function GetSchemeValue(Index)
     return Library.Scheme[Index]
 end
 
-local function AddCorner(Instance, Radius)
+local function AddCorner(Parent, Radius)
     local Corner = Instance.new("UICorner")
     Corner.CornerRadius = UDim.new(0, Radius or Library.CornerRadius)
-    Corner.Parent = Instance
+    Corner.Parent = Parent
     table.insert(Library.Corners, Corner)
     return Corner
 end
 
-local function AddStroke(Instance, Color, Thickness)
+local function AddStroke(Parent, Color, Thickness)
     local Stroke = Instance.new("UIStroke")
     Stroke.Color = Color or Library.Scheme.OutlineColor
     Stroke.Thickness = Thickness or 1
     Stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    Stroke.Parent = Instance
+    Stroke.Parent = Parent
     return Stroke
 end
 
 local function New(Class, Properties)
-    local Instance = Instance.new(Class)
+    local Obj = Instance.new(Class)
     for Property, Value in Properties do
         if typeof(Value) == "function" then
-            Instance[Property] = Value()
+            Obj[Property] = Value()
         elseif typeof(Value) == "string" then
             local SchemeValue = GetSchemeValue(Value)
             if SchemeValue ~= nil then
-                Instance[Property] = SchemeValue
+                Obj[Property] = SchemeValue
             else
-                Instance[Property] = Value
+                Obj[Property] = Value
             end
         else
-            Instance[Property] = Value
+            Obj[Property] = Value
         end
     end
-    return Instance
+    return Obj
 end
 
 local function Validate(Info, Template)
@@ -837,8 +837,11 @@ function Library:CreateWindow(Info)
                 })
             end
 
+            local CollapseButton = nil
+            local Collapsed = Info.Collapsed
+
             if not Info.DisableCollapsing then
-                local CollapseButton = New("ImageButton", {
+                CollapseButton = New("ImageButton", {
                     AnchorPoint = Vector2.new(1, 0.5),
                     BackgroundTransparency = 1,
                     Image = "rbxassetid://10709790948",
@@ -848,22 +851,9 @@ function Library:CreateWindow(Info)
                     Parent = GroupboxTop,
                 })
 
-                local Collapsed = Info.Collapsed
                 if Collapsed then
                     CollapseButton.Rotation = -90
                 end
-
-                local ContentContainer = nil
-
-                CollapseButton.MouseButton1Click:Connect(function()
-                    Collapsed = not Collapsed
-                    TweenService:Create(CollapseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                        Rotation = Collapsed and -90 or 0,
-                    }):Play()
-                    if ContentContainer then
-                        ContentContainer.Visible = not Collapsed
-                    end
-                end)
             end
 
             local GroupboxLine = New("Frame", {
@@ -894,15 +884,14 @@ function Library:CreateWindow(Info)
                 Parent = GroupboxContainer,
             })
 
-            -- Store reference for collapse
-            if not Info.DisableCollapsing then
-                -- Find the collapse button and connect
-                for _, child in ipairs(GroupboxTop:GetChildren()) do
-                    if child:IsA("ImageButton") then
-                        -- Already connected above, but we need to reference the container
-                        -- Use a different approach: connect after container creation
-                    end
-                end
+            if CollapseButton then
+                CollapseButton.MouseButton1Click:Connect(function()
+                    Collapsed = not Collapsed
+                    TweenService:Create(CollapseButton, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        Rotation = Collapsed and -90 or 0,
+                    }):Play()
+                    GroupboxContainer.Visible = not Collapsed
+                end)
             end
 
             local Group = {
@@ -998,8 +987,7 @@ function Library:CreateWindow(Info)
 
                 function ToggleObj:SetValue(Value)
                     ToggleObj.Value = Value
-                    local TargetPos = Value and UDim2.new(1, -2, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
-                    TargetPos = Value and UDim2.new(1, -20, 0, 2) or UDim2.new(0, 2, 0, 2)
+                    local TargetPos = Value and UDim2.new(1, -20, 0, 2) or UDim2.new(0, 2, 0, 2)
                     TweenService:Create(Ball, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                         Position = TargetPos,
                     }):Play()
@@ -1631,16 +1619,16 @@ function Library:CreateWindow(Info)
                 end
             end
 
-            function Tab:AddLeftGroupbox(Name, Icon)
-                return Tab:AddGroupbox({ Side = 1, Name = Name, IconName = Icon })
-            end
-
-            function Tab:AddRightGroupbox(Name, Icon)
-                return Tab:AddGroupbox({ Side = 2, Name = Name, IconName = Icon })
-            end
-
             table.insert(Tab.Groupboxes, Group)
             return Group
+        end
+
+        function Tab:AddLeftGroupbox(Name, Icon)
+            return Tab:AddGroupbox({ Side = 1, Name = Name, IconName = Icon })
+        end
+
+        function Tab:AddRightGroupbox(Name, Icon)
+            return Tab:AddGroupbox({ Side = 2, Name = Name, IconName = Icon })
         end
 
         return Tab
