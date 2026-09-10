@@ -355,12 +355,7 @@ AppearanceGroup:AddSlider("MenuKeybind", {
 	Max = 100,
 	Suffix = "%",
 	Callback = function(Value)
-		local MainFrame = Library.Window
-		if MainFrame then
-			local H, S, V = Library.Scheme.BackgroundColor:ToHSV()
-			MainFrame.BackgroundColor3 = Color3.fromHSV(H, S, V)
-			MainFrame.BackgroundTransparency = 1 - (Value / 100)
-		end
+		Library:SetOpacity(Value / 100)
 	end,
 })
 

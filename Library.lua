@@ -371,6 +371,37 @@ function Library:Toggle(State)
     end
 end
 
+function Library:SetOpacity(Value)
+    Library.Opacity = Value
+    local MainFrame = Library.Window
+    if not MainFrame then return end
+    local trans = 1 - Value
+    if not Library._OpacityCache then
+        Library._OpacityCache = {}
+        for _, Obj in MainFrame:GetDescendants() do
+            if Obj:IsA("GuiObject") then
+                Library._OpacityCache[Obj] = Obj.BackgroundTransparency
+            elseif Obj:IsA("UIStroke") then
+                Library._OpacityCache[Obj] = Obj.Transparency
+            elseif Obj:IsA("ScrollingFrame") then
+                Library._OpacityCache[Obj] = Obj.ScrollBarImageTransparency
+            end
+        end
+        Library._OpacityCache[MainFrame] = MainFrame.BackgroundTransparency
+    end
+    for Obj, origTrans in Library._OpacityCache do
+        if Obj and Obj.Parent then
+            if Obj:IsA("GuiObject") then
+                Obj.BackgroundTransparency = math.clamp(origTrans + trans, 0, 1)
+            elseif Obj:IsA("UIStroke") then
+                Obj.Transparency = math.clamp(origTrans + trans, 0, 1)
+            elseif Obj:IsA("ScrollingFrame") then
+                Obj.ScrollBarImageTransparency = math.clamp(origTrans + trans, 0, 1)
+            end
+        end
+    end
+end
+
 function Library:CreateWindow(Info)
     Info = Info or {}
     local Title = Info.Title or "KoraxUI"
