@@ -34,6 +34,7 @@ local flyKeyUp = nil
 MoveGroup:AddToggle("Flight", {
     Text = "Flight",
     Default = false,
+    Keybind = Enum.KeyCode.F,
     Callback = function(Value)
         local character = LocalPlayer.Character
         local hrp = character and character:FindFirstChild("HumanoidRootPart")
@@ -145,6 +146,7 @@ MoveGroup:AddSlider("FlightSpeed", {
 MoveGroup:AddToggle("Speed", {
     Text = "Speed",
     Default = false,
+    Keybind = Enum.KeyCode.LeftShift,
     Callback = function(Value)
         local character = LocalPlayer.Character
         local humanoid = character and character:FindFirstChildOfClass("Humanoid")
@@ -173,6 +175,7 @@ local InfJumpEnabled = false
 MoveGroup:AddToggle("InfJump", {
     Text = "Infinite Jump",
     Default = false,
+    Keybind = Enum.KeyCode.Space,
     Callback = function(Value)
         InfJumpEnabled = Value
         if Value then
@@ -187,6 +190,21 @@ MoveGroup:AddToggle("InfJump", {
             if InfJumpConnection then InfJumpConnection:Disconnect() InfJumpConnection = nil end
         end
     end,
+})
+
+local SettingsGroup = Tabs.Movement:AddGroupbox({
+    Side = 2,
+    Name = "Settings",
+    IconName = "settings",
+})
+
+SettingsGroup:AddButton({
+    Text = "Reset Keybinds",
+    Func = function()
+        Library:ClearKeybinds()
+        Library:Notify({ Title = "Keybinds", Text = "All keybinds cleared!", Time = 2 })
+    end,
+    Risky = true,
 })
 
 -- ==================== VISUAL TAB ====================

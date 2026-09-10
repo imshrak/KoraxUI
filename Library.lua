@@ -42,6 +42,8 @@ local Library = {
     Registry = {},
     Corners = {},
     Signals = {},
+    Keybinds = {},
+    ListeningKeybind = nil,
     NotifySide = "Right",
     Notifications = {},
     CornerRadius = 4,
@@ -205,6 +207,35 @@ function Library:GiveSignal(Connection)
     end
     return Connection
 end
+
+function Library:ClearKeybinds()
+    for idx, bind in Library.Keybinds do
+        if bind.Toggle then
+            bind.Toggle:SetKeybind(nil)
+        end
+    end
+    Library.Keybinds = {}
+    Library.ListeningKeybind = nil
+end
+
+Library:GiveSignal(UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if Library.ListeningKeybind then
+        local toggle = Library.ListeningKeybind
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            toggle:SetKeybind(input.KeyCode)
+        end
+        Library.ListeningKeybind = nil
+        return
+    end
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        for idx, bind in Library.Keybinds do
+            if bind.KeyCode == input.KeyCode and bind.Toggle then
+                bind.Toggle:SetValue(not bind.Toggle.Value)
+            end
+        end
+    end
+end))
 
 function Library:MakeDraggable(UI, DragFrame)
     local Dragging = false
@@ -919,6 +950,7 @@ function Library:CreateWindow(Info)
             end
 
             function Group:AddToggle(Idx, ToggleInfo)
+                local SavedKeybind = ToggleInfo and ToggleInfo.Keybind
                 ToggleInfo = Validate(ToggleInfo or {}, {
                     Text = "Toggle",
                     Default = false,
@@ -928,6 +960,7 @@ function Library:CreateWindow(Info)
                     Disabled = false,
                     Visible = true,
                 })
+                ToggleInfo.Keybind = SavedKeybind
 
                 local Holder = New("Frame", {
                     BackgroundTransparency = 1,
@@ -945,13 +978,38 @@ function Library:CreateWindow(Info)
 
                 local ToggleLabel = New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, -46, 1, 0),
+                    Size = UDim2.new(1, -80, 1, 0),
                     Text = ToggleInfo.Text,
                     TextColor3 = ToggleInfo.Risky and "RedColor" or "FontColor",
                     TextSize = 14,
                     FontFace = Library.Scheme.Font,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = Button,
+                })
+
+                local KeybindBtn = New("TextButton", {
+                    AnchorPoint = Vector2.new(0, 0.5),
+                    BackgroundColor3 = "MainColor",
+                    Position = UDim2.new(1, -68, 0.5, 0),
+                    Size = UDim2.fromOffset(28, 16),
+                    Text = "",
+                    TextColor3 = "FontColor",
+                    TextSize = 10,
+                    FontFace = Library.Scheme.Font,
+                    Visible = ToggleInfo.Keybind ~= nil,
+                    Parent = Button,
+                })
+                AddCorner(KeybindBtn, 4)
+                local KeybindStroke = AddStroke(KeybindBtn)
+
+                local KeybindLabel = New("TextLabel", {
+                    BackgroundTransparency = 1,
+                    Size = UDim2.fromScale(1, 1),
+                    Text = "",
+                    TextColor3 = "FontColor",
+                    TextSize = 10,
+                    FontFace = Library.Scheme.Font,
+                    Parent = KeybindBtn,
                 })
 
                 local Switch = New("Frame", {
@@ -987,7 +1045,23 @@ function Library:CreateWindow(Info)
                     Holder = Holder,
                     Disabled = ToggleInfo.Disabled,
                     Visible = ToggleInfo.Visible,
+                    Keybind = ToggleInfo.Keybind,
+                    KeybindBtn = KeybindBtn,
+                    KeybindLabel = KeybindLabel,
                 }
+
+                function ToggleObj:SetKeybind(KeyCode)
+                    ToggleObj.Keybind = KeyCode
+                    if KeyCode then
+                        KeybindBtn.Visible = true
+                        KeybindLabel.Text = KeyCode.Name:sub(1, 4)
+                        Library.Keybinds[Idx] = { KeyCode = KeyCode, Toggle = ToggleObj }
+                    else
+                        KeybindBtn.Visible = false
+                        KeybindLabel.Text = ""
+                        Library.Keybinds[Idx] = nil
+                    end
+                end
 
                 function ToggleObj:SetValue(Value)
                     ToggleObj.Value = Value
@@ -1022,6 +1096,26 @@ function Library:CreateWindow(Info)
                         ToggleObj:SetValue(not ToggleObj.Value)
                     end
                 end)
+
+                KeybindBtn.MouseButton1Click:Connect(function()
+                    if Library.ListeningKeybind == ToggleObj then
+                        Library.ListeningKeybind = nil
+                        KeybindLabel.Text = ToggleObj.Keybind and ToggleObj.Keybind.Name:sub(1, 4) or ""
+                        KeybindStroke.Color = Library.Scheme.OutlineColor
+                        return
+                    end
+                    Library.ListeningKeybind = ToggleObj
+                    KeybindLabel.Text = "..."
+                    KeybindStroke.Color = Library.Scheme.AccentColor
+                end)
+
+                KeybindBtn.MouseButton2Click:Connect(function()
+                    ToggleObj:SetKeybind(nil)
+                end)
+
+                if ToggleInfo.Keybind then
+                    ToggleObj:SetKeybind(ToggleInfo.Keybind)
+                end
 
                 Toggles[Idx] = ToggleObj
                 ToggleObj:SetValue(ToggleInfo.Default)
