@@ -341,20 +341,20 @@ local Templates = {
     },
     TextLabel = {
         BorderSizePixel = 0,
-        FontFace = "Font",
+        FontFace = function() return Library.Scheme.Font end,
         RichText = true,
         TextColor3 = "FontColor",
     },
     TextButton = {
         AutoButtonColor = false,
         BorderSizePixel = 0,
-        FontFace = "Font",
+        FontFace = function() return Library.Scheme.Font end,
         RichText = true,
         TextColor3 = "FontColor",
     },
     TextBox = {
         BorderSizePixel = 0,
-        FontFace = "Font",
+        FontFace = function() return Library.Scheme.Font end,
         PlaceholderColor3 = function()
             local H, S, V = Library.Scheme.FontColor:ToHSV()
             return Color3.fromHSV(H, S, V / 2)
