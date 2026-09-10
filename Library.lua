@@ -785,7 +785,7 @@ function Library:CreateWindow(Info)
                 Library.ActiveTab = Tab
                 TabContainer.Visible = true
                 TabButton.BackgroundColor3 = Library.Scheme.MainColor
-                TabButton.BackgroundTransparency = 0
+                TabButton.BackgroundTransparency = Library.Opacity and (1 - Library.Opacity) or 0
                 TabLabel.TextTransparency = 0
                 if TabIcon then
                     TabIcon.ImageTransparency = 0
