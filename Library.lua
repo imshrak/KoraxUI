@@ -55,6 +55,7 @@ local Library = {
         RedColor = Color3.fromRGB(255, 50, 50),
     },
     Icons = {
+        move = "rbxassetid://92481398073007",
         home = "rbxassetid://10723407389",
         user = "rbxassetid://10747373176",
         settings = "rbxassetid://10734950309",
