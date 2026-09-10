@@ -1052,13 +1052,13 @@ function Library:CreateWindow(Info)
 
                 function ToggleObj:SetKeybind(KeyCode)
                     ToggleObj.Keybind = KeyCode
+                    KeybindBtn.Visible = true
+                    KeybindStroke.Color = Library.Scheme.OutlineColor
                     if KeyCode then
-                        KeybindBtn.Visible = true
                         KeybindLabel.Text = KeyCode.Name:sub(1, 4)
                         Library.Keybinds[Idx] = { KeyCode = KeyCode, Toggle = ToggleObj }
                     else
-                        KeybindBtn.Visible = false
-                        KeybindLabel.Text = ""
+                        KeybindLabel.Text = "---"
                         Library.Keybinds[Idx] = nil
                     end
                 end
@@ -1100,7 +1100,7 @@ function Library:CreateWindow(Info)
                 KeybindBtn.MouseButton1Click:Connect(function()
                     if Library.ListeningKeybind == ToggleObj then
                         Library.ListeningKeybind = nil
-                        KeybindLabel.Text = ToggleObj.Keybind and ToggleObj.Keybind.Name:sub(1, 4) or ""
+                        KeybindLabel.Text = ToggleObj.Keybind and ToggleObj.Keybind.Name:sub(1, 4) or "---"
                         KeybindStroke.Color = Library.Scheme.OutlineColor
                         return
                     end
