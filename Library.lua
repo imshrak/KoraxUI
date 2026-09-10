@@ -751,6 +751,7 @@ function Library:CreateWindow(Info)
             })
 
             local GroupboxHolder = New("Frame", {
+                AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = "BackgroundColor",
                 Size = UDim2.fromScale(1, 0),
                 Parent = BoxHolder,
@@ -866,6 +867,7 @@ function Library:CreateWindow(Info)
 
             local GroupboxContainer = New("ScrollingFrame", {
                 AutomaticCanvasSize = Enum.AutomaticSize.Y,
+                AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 CanvasSize = UDim2.fromScale(0, 0),
