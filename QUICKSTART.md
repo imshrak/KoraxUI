@@ -1,64 +1,94 @@
 # Quick Start Guide
 
-## 1. Upload to GitHub
-
-1. Create a GitHub repository called "KoraxUI"
-2. Upload all files from this folder
-3. **Important**: Edit `Library.lua` line 32 and replace `imshrak` with your GitHub username
-
-## 2. Use in Your Script
+## 1. Load the Library
 
 ```lua
--- Load the library
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/master/Library.lua"))()
+```
 
--- Create window
+## 2. Create a Window
+
+```lua
 local Window = Library:CreateWindow({
     Title = "My Menu",
-    Icon = "home",
+    Footer = "v1.0",
+    Size = UDim2.fromOffset(620, 450),
+    NotifySide = "Right",
+    ToggleKeybind = Enum.KeyCode.RightControl,
 })
+```
 
--- Add tabs
+## 3. Add Tabs
+
+```lua
 local Tabs = {
     Main = Window:AddTab("Main", "user"),
+    Settings = Window:AddTab("Settings", "settings"),
 }
+```
 
--- Add groupbox
-local Group = Tabs.Main:AddLeftGroupbox("Features", "star")
+## 4. Add Groupboxes
 
--- Add toggle
-Group:AddToggle("MyToggle", {
+```lua
+local LeftGroup = Tabs.Main:AddGroupbox({
+    Side = 1,
+    Name = "Features",
+    IconName = "star",
+})
+
+local RightGroup = Tabs.Main:AddGroupbox({
+    Side = 2,
+    Name = "Settings",
+    IconName = "settings",
+})
+```
+
+## 5. Add Elements
+
+```lua
+LeftGroup:AddToggle("MyToggle", {
     Text = "Enable Feature",
     Default = false,
     Callback = function(Value)
-        print(Value)
+        print("Toggle:", Value)
+    end,
+})
+
+LeftGroup:AddSlider("MySlider", {
+    Text = "Speed",
+    Default = 50,
+    Min = 0,
+    Max = 100,
+    Suffix = "%",
+})
+
+LeftGroup:AddDropdown("MyDropdown", {
+    Text = "Mode",
+    Values = {"Easy", "Medium", "Hard"},
+    Value = "Medium",
+})
+
+LeftGroup:AddInput("MyInput", {
+    Text = "Name",
+    Placeholder = "Enter name...",
+})
+
+LeftGroup:AddButton({
+    Text = "Click Me",
+    Func = function()
+        Library:Notify({ Title = "Clicked!", Text = "Button was pressed", Time = 2 })
     end,
 })
 ```
 
-## 3. Toggle Keybind
+## 6. Toggle the Menu
 
-Press `RightControl` to toggle the menu (default)
+Press `RightControl` (default) to show/hide the menu.
 
-## Key Features
+## File Structure
 
-- ✅ Horizontal tabs at the top (modified from original Obsidian)
-- ✅ Loadstring compatible
-- ✅ All standard UI elements (toggles, sliders, inputs, dropdowns)
-- ✅ Left and right groupboxes
-- ✅ Customizable themes
-- ✅ Easy GitHub upload
-
-## Files Overview
-
-- `Library.lua` - Main library file (edit line 32 with your GitHub username)
+- `Library.lua` - Main library file
 - `Example.lua` - Example usage script
 - `README.md` - Full documentation
-- `SETUP.md` - Detailed setup guide
-- `LICENSE` - MIT License
-- `assets/` - Image assets folder
-- `.gitignore` - Git ignore file
-
-## Need Help?
-
-See `SETUP.md` for detailed setup instructions and troubleshooting.
+- `QUICKSTART.md` - This file
+- `SETUP.md` - Setup guide
