@@ -62,20 +62,18 @@ MoveGroup:AddToggle("Flight", {
 
             flyKeyDown = UserInputService.InputBegan:Connect(function(input, processed)
                 if processed then return end
-                local speed = Toggles.FlightSpeed and Toggles.FlightSpeed.Value or 50
-                local mult = speed / 50
                 if input.KeyCode == Enum.KeyCode.W then
-                    CONTROL.F = mult
+                    CONTROL.F = 1
                 elseif input.KeyCode == Enum.KeyCode.S then
-                    CONTROL.B = -mult
+                    CONTROL.B = -1
                 elseif input.KeyCode == Enum.KeyCode.A then
-                    CONTROL.L = -mult
+                    CONTROL.L = -1
                 elseif input.KeyCode == Enum.KeyCode.D then
-                    CONTROL.R = mult
+                    CONTROL.R = 1
                 elseif input.KeyCode == Enum.KeyCode.E then
-                    CONTROL.Q = mult * 2
+                    CONTROL.Q = 2
                 elseif input.KeyCode == Enum.KeyCode.Q then
-                    CONTROL.E = -(mult * 2)
+                    CONTROL.E = -2
                 end
             end)
 
@@ -101,8 +99,10 @@ MoveGroup:AddToggle("Flight", {
                     local camera = workspace.CurrentCamera
                     if not hrp.Parent then break end
 
+                    local flyspeed = Toggles.FlightSpeed and Toggles.FlightSpeed.Value or 50
+
                     if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
-                        SPEED = 50
+                        SPEED = flyspeed
                     elseif SPEED ~= 0 then
                         SPEED = 0
                     end
