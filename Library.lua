@@ -569,15 +569,18 @@ function Library:CreateWindow(Info)
             if MousePos.X >= MainPos.X and MousePos.X <= MainPos.X + MainSize.X
                 and MousePos.Y >= MainPos.Y and MousePos.Y <= MainPos.Y + MainSize.Y then
                 local scrollAmount = -Input.Position.Z * 20
+                local midX = MainPos.X + MainSize.X / 2
+                local onLeft = MousePos.X < midX
+                local onRight = MousePos.X >= midX
                 for _, Tab in Library.Tabs do
-                    if Tab.Left and Tab.Left.Visible then
+                    if onLeft and Tab.Left and Tab.Left.Visible then
                         local maxScroll = math.max(0, Tab.Left.CanvasSize.Y.Offset - Tab.Left.AbsoluteSize.Y)
                         Tab.Left.CanvasPosition = Vector2.new(
                             Tab.Left.CanvasPosition.X,
                             math.clamp(Tab.Left.CanvasPosition.Y + scrollAmount, 0, maxScroll)
                         )
                     end
-                    if Tab.Right and Tab.Right.Visible then
+                    if onRight and Tab.Right and Tab.Right.Visible then
                         local maxScroll = math.max(0, Tab.Right.CanvasSize.Y.Offset - Tab.Right.AbsoluteSize.Y)
                         Tab.Right.CanvasPosition = Vector2.new(
                             Tab.Right.CanvasPosition.X,
