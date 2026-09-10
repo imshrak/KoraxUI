@@ -1,0 +1,17 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Roblox Studio
+.roblox/
+temp/
+
+# Custom assets (optional - uncomment if you want to ignore custom assets)
+# custom_assets/
