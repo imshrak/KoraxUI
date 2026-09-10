@@ -19,7 +19,7 @@ A modified version of the Obsidian UI Library with horizontal tabs on top instea
 ### Basic Example
 
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/yourusername/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
 
 local Window = Library:CreateWindow({
     Title = "KoraxMENU",
@@ -52,7 +52,7 @@ MainGroup:AddToggle("MyToggle", {
 Simply use the loadstring in your script:
 
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/yourusername/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
 ```
 
 ## Credits

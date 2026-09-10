@@ -9,7 +9,7 @@
 
 2. **Update URLs in Library.lua**
    - Open `Library.lua` and find line 32
-   - Replace `YOUR_USERNAME` with your actual GitHub username
+   - Replace `imshrak` with your actual GitHub username
    - Example: `https://raw.githubusercontent.com/johndoe/KoraxMENU/main/`
 
 3. **Upload Files to GitHub**
@@ -23,7 +23,7 @@
 4. **Test the Loadstring**
    - Use the following format to load your library:
    ```lua
-   local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/KoraxMENU/main/Library.lua"))()
+   local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
    ```
 
 ## Asset Management
@@ -43,7 +43,7 @@ The library includes placeholder asset IDs. For production use:
 
 ```lua
 -- Load the library
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
 
 -- Create a window
 local Window = Library:CreateWindow({

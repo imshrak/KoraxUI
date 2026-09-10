@@ -4,13 +4,13 @@
 
 1. Create a GitHub repository called "KoraxMENU"
 2. Upload all files from this folder
-3. **Important**: Edit `Library.lua` line 32 and replace `YOUR_USERNAME` with your GitHub username
+3. **Important**: Edit `Library.lua` line 32 and replace `imshrak` with your GitHub username
 
 ## 2. Use in Your Script
 
 ```lua
 -- Load the library
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
 
 -- Create window
 local Window = Library:CreateWindow({

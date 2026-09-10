@@ -1,8 +1,8 @@
 -- KoraxMENU Example Script
 -- This demonstrates how to use the library with loadstring
 
--- Load the library from GitHub (replace with your actual GitHub URL)
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/yourusername/KoraxMENU/main/Library.lua"))()
+-- Load the library from GitHub
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
 
 -- Access the tables
 local Options = Library.Options
