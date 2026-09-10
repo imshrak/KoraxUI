@@ -27,8 +27,10 @@ local MoveGroup = Tabs.Movement:AddGroupbox({
     IconName = "activity",
 })
 
-local FlightConnection = nil
-local FlightAnim = nil
+local FLYING = false
+local flyKeyDown = nil
+local flyKeyUp = nil
+
 MoveGroup:AddToggle("Flight", {
     Text = "Flight",
     Default = false,
@@ -39,91 +41,96 @@ MoveGroup:AddToggle("Flight", {
         if not hrp or not humanoid then return end
 
         if Value then
-            local bv = Instance.new("BodyVelocity")
-            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            bv.Velocity = Vector3.zero
-            bv.P = 1e4
-            bv.Name = "KoraxFlight"
-            bv.Parent = hrp
+            FLYING = true
 
-            local bg = Instance.new("BodyGyro")
-            bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-            bg.P = 5e4
-            bg.D = 500
-            bg.Name = "KoraxFlightGyro"
-            bg.Parent = hrp
+            local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+            local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+            local SPEED = 0
+
+            local BG = Instance.new("BodyGyro")
+            BG.P = 9e4
+            BG.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            BG.CFrame = hrp.CFrame
+            BG.Parent = hrp
+
+            local BV = Instance.new("BodyVelocity")
+            BV.Velocity = Vector3.new(0, 0, 0)
+            BV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            BV.Parent = hrp
 
             humanoid.PlatformStand = true
-            humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 
-            local rayParams = RaycastParams.new()
-            rayParams.FilterType = Enum.RaycastFilterType.Exclude
-            rayParams.FilterDescendantsInstances = {character}
-
-            local lastVelocity = Vector3.zero
-
-            FlightConnection = RunService.RenderStepped:Connect(function(dt)
-                local bv = hrp:FindFirstChild("KoraxFlight")
-                local bg = hrp:FindFirstChild("KoraxFlightGyro")
-                if not bv or not bg or not hrp.Parent then return end
-
+            flyKeyDown = UserInputService.InputBegan:Connect(function(input, processed)
+                if processed then return end
                 local speed = Toggles.FlightSpeed and Toggles.FlightSpeed.Value or 50
-                local cam = workspace.CurrentCamera
-                local cf = cam.CFrame
-
-                local dir = Vector3.zero
-                if UserInputService:IsKeyDown(Enum.KeyCode.W) then dir = dir + cf.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.S) then dir = dir - cf.LookVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.A) then dir = dir - cf.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.D) then dir = dir + cf.RightVector end
-                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then dir = dir + Vector3.new(0, 1, 0) end
-                if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir - Vector3.new(0, 1, 0) end
-
-                if dir.Magnitude > 0 then
-                    dir = dir.Unit
-                end
-
-                local targetVelocity = dir * speed
-                local smoothSpeed = 10 * dt
-                lastVelocity = lastVelocity:Lerp(targetVelocity, math.clamp(smoothSpeed, 0, 1))
-                bv.Velocity = lastVelocity
-
-                local targetCF = cf * CFrame.Angles(0, 0, 0)
-                local currentCF = hrp.CFrame
-                local targetLook = targetCF.LookVector
-                local targetRight = targetCF.RightVector
-                local targetUp = targetCF.UpVector
-
-                if dir.Magnitude > 0 then
-                    local moveCF = CFrame.lookAt(Vector3.zero, dir)
-                    local blendedCF = CFrame.fromMatrix(
-                        Vector3.zero,
-                        currentCF.RightVector:Lerp(moveCF.RightVector, 6 * dt),
-                        currentCF.UpVector:Lerp(moveCF.UpVector, 6 * dt),
-                        currentCF.LookVector:Lerp(moveCF.LookVector, 6 * dt)
-                    )
-                    bg.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + blendedCF.LookVector, blendedCF.UpVector)
-                else
-                    bg.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + currentCF.LookVector, Vector3.new(0, 1, 0))
+                local mult = speed / 50
+                if input.KeyCode == Enum.KeyCode.W then
+                    CONTROL.F = mult
+                elseif input.KeyCode == Enum.KeyCode.S then
+                    CONTROL.B = -mult
+                elseif input.KeyCode == Enum.KeyCode.A then
+                    CONTROL.L = -mult
+                elseif input.KeyCode == Enum.KeyCode.D then
+                    CONTROL.R = mult
+                elseif input.KeyCode == Enum.KeyCode.E then
+                    CONTROL.Q = mult * 2
+                elseif input.KeyCode == Enum.KeyCode.Q then
+                    CONTROL.E = -(mult * 2)
                 end
             end)
+
+            flyKeyUp = UserInputService.InputEnded:Connect(function(input, processed)
+                if processed then return end
+                if input.KeyCode == Enum.KeyCode.W then
+                    CONTROL.F = 0
+                elseif input.KeyCode == Enum.KeyCode.S then
+                    CONTROL.B = 0
+                elseif input.KeyCode == Enum.KeyCode.A then
+                    CONTROL.L = 0
+                elseif input.KeyCode == Enum.KeyCode.D then
+                    CONTROL.R = 0
+                elseif input.KeyCode == Enum.KeyCode.E then
+                    CONTROL.Q = 0
+                elseif input.KeyCode == Enum.KeyCode.Q then
+                    CONTROL.E = 0
+                end
+            end)
+
+            task.spawn(function()
+                repeat task.wait()
+                    local camera = workspace.CurrentCamera
+                    if not hrp.Parent then break end
+
+                    if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+                        SPEED = 50
+                    elseif SPEED ~= 0 then
+                        SPEED = 0
+                    end
+
+                    if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+                        BV.Velocity = ((camera.CFrame.LookVector * (CONTROL.F + CONTROL.B)) + ((camera.CFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
+                        lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
+                    elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
+                        BV.Velocity = ((camera.CFrame.LookVector * (lCONTROL.F + lCONTROL.B)) + ((camera.CFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - camera.CFrame.p)) * SPEED
+                    else
+                        BV.Velocity = Vector3.new(0, 0, 0)
+                    end
+
+                    BG.CFrame = camera.CFrame
+                until not FLYING
+
+                CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+                lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+                SPEED = 0
+                BG:Destroy()
+                BV:Destroy()
+                if humanoid then humanoid.PlatformStand = false end
+            end)
         else
-            if FlightConnection then
-                FlightConnection:Disconnect()
-                FlightConnection = nil
-            end
-
-            if hrp then
-                local bv = hrp:FindFirstChild("KoraxFlight")
-                if bv then bv:Destroy() end
-                local bg = hrp:FindFirstChild("KoraxFlightGyro")
-                if bg then bg:Destroy() end
-            end
-
-            if humanoid then
-                humanoid.PlatformStand = false
-                humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-            end
+            FLYING = false
+            if flyKeyDown then flyKeyDown:Disconnect() flyKeyDown = nil end
+            if flyKeyUp then flyKeyUp:Disconnect() flyKeyUp = nil end
+            if humanoid then humanoid.PlatformStand = false end
         end
     end,
 })
@@ -156,9 +163,7 @@ MoveGroup:AddSlider("SpeedValue", {
         if Toggles.Speed and Toggles.Speed.Value then
             local character = LocalPlayer.Character
             local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid.WalkSpeed = Value
-            end
+            if humanoid then humanoid.WalkSpeed = Value end
         end
     end,
 })
@@ -175,16 +180,11 @@ MoveGroup:AddToggle("InfJump", {
                 if InfJumpEnabled then
                     local character = LocalPlayer.Character
                     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    end
+                    if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
                 end
             end)
         else
-            if InfJumpConnection then
-                InfJumpConnection:Disconnect()
-                InfJumpConnection = nil
-            end
+            if InfJumpConnection then InfJumpConnection:Disconnect() InfJumpConnection = nil end
         end
     end,
 })
@@ -225,11 +225,7 @@ VisGroup:AddToggle("Highlight", {
     Text = "Highlight Players",
     Default = false,
     Callback = function(Value)
-        if Value then
-            AddHighlights()
-        else
-            RemoveHighlights()
-        end
+        if Value then AddHighlights() else RemoveHighlights() end
     end,
 })
 
