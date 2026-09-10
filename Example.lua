@@ -1,8 +1,8 @@
--- KoraxMENU Example Script
+-- KoraxUI Example Script
 -- This demonstrates how to use the library with loadstring
 
 -- Load the library from GitHub
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
 
 -- Access the tables
 local Options = Library.Options
@@ -10,7 +10,7 @@ local Toggles = Library.Toggles
 
 -- Create the main window
 local Window = Library:CreateWindow({
-    Title = "KoraxMENU",
+    Title = "KoraxUI",
     Footer = "Example Script",
     Icon = "home",
     NotifySide = "Right",
@@ -114,5 +114,5 @@ UserInputService.InputBegan:Connect(function(Input, GameProcessed)
     end
 end)
 
-print("KoraxMENU loaded successfully!")
+print("KoraxUI loaded successfully!")
 print("Press RightControl to toggle the menu")

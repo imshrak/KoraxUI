@@ -1,4 +1,4 @@
-# KoraxMENU - Roblox UI Library
+# KoraxUI - Roblox UI Library
 
 A modified version of the Obsidian UI Library with horizontal tabs on top instead of vertical tabs on the right side.
 
@@ -19,10 +19,10 @@ A modified version of the Obsidian UI Library with horizontal tabs on top instea
 ### Basic Example
 
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
 
 local Window = Library:CreateWindow({
-    Title = "KoraxMENU",
+    Title = "KoraxUI",
     Icon = "home",
     NotifySide = "Right",
 })
@@ -52,13 +52,13 @@ MainGroup:AddToggle("MyToggle", {
 Simply use the loadstring in your script:
 
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
 ```
 
 ## Credits
 
 - Based on [Obsidian UI Library](https://github.com/deividcomsono/Obsidian) by deividcomsono
-- Modified with horizontal tabs layout for KoraxMENU
+- Modified with horizontal tabs layout for KoraxUI
 
 ## License
 

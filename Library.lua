@@ -29,12 +29,12 @@ local Toggles = {}
 local Options = {}
 local Tooltips = {}
 
-local BaseURL = "https://raw.githubusercontent.com/imshrak/KoraxMENU/main/"
+local BaseURL = "https://raw.githubusercontent.com/imshrak/KoraxUI/main/"
 local CustomImageManager = {}
 local CustomImageManagerAssets = {
     TransparencyTexture = {
         RobloxId = 139785960036434,
-        Path = "KoraxMENU/assets/TransparencyTexture.png",
+        Path = "KoraxUI/assets/TransparencyTexture.png",
         URL = BaseURL .. "assets/TransparencyTexture.png",
 
         Id = nil,
@@ -42,7 +42,7 @@ local CustomImageManagerAssets = {
 
     SaturationMap = {
         RobloxId = 4155801252,
-        Path = "KoraxMENU/assets/SaturationMap.png",
+        Path = "KoraxUI/assets/SaturationMap.png",
         URL = BaseURL .. "assets/SaturationMap.png",
 
         Id = nil,
@@ -50,7 +50,7 @@ local CustomImageManagerAssets = {
 
     LoadingIcon = {
         RobloxId = 97544096941083,
-        Path = "KoraxMENU/assets/LoadingIcon.png",
+        Path = "KoraxUI/assets/LoadingIcon.png",
         URL = BaseURL .. "assets/LoadingIcon.png",
 
         Id = nil,
@@ -58,7 +58,7 @@ local CustomImageManagerAssets = {
 
     CheckIcon = {
         RobloxId = 97682394690683,
-        Path = "KoraxMENU/assets/CheckIcon.png",
+        Path = "KoraxUI/assets/CheckIcon.png",
         URL = BaseURL .. "assets/CheckIcon.png",
 
         Id = nil,
@@ -102,7 +102,7 @@ do
 
         CustomImageManagerAssets[AssetName] = {
             RobloxId = RobloxAssetId,
-            Path = string.format("KoraxMENU/custom_assets/%s", AssetName),
+            Path = string.format("KoraxUI/custom_assets/%s", AssetName),
             URL = URL,
 
             Id = nil,
@@ -465,7 +465,7 @@ local Templates = {
         FooterButtons = {}
     },
     Loading = {
-        Title = "KoraxMENU",
+        Title = "KoraxUI",
         Icon = 95816097006870,
         IconSize = UDim2.fromOffset(30, 30),
 
@@ -953,7 +953,7 @@ function Library:CreateWindow(Info)
     Library.ShowCustomCursor = Info.ShowCustomCursor
 
     local ScreenGui = New("ScreenGui", {
-        Name = "KoraxMENU",
+        Name = "KoraxUI",
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Parent = gethui(),

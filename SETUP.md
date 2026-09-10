@@ -1,16 +1,16 @@
-# Setup Guide for KoraxMENU
+# Setup Guide for KoraxUI
 
 ## Getting Started with GitHub Upload
 
 1. **Create a GitHub Repository**
-   - Go to GitHub and create a new repository named "KoraxMENU"
+   - Go to GitHub and create a new repository named "KoraxUI"
    - Make it public if you want to share it with others
    - Initialize with README (we already have one)
 
 2. **Update URLs in Library.lua**
    - Open `Library.lua` and find line 32
    - Replace `imshrak` with your actual GitHub username
-   - Example: `https://raw.githubusercontent.com/johndoe/KoraxMENU/main/`
+   - Example: `https://raw.githubusercontent.com/johndoe/KoraxUI/main/`
 
 3. **Upload Files to GitHub**
    - Upload all files from this folder to your GitHub repository:
@@ -23,7 +23,7 @@
 4. **Test the Loadstring**
    - Use the following format to load your library:
    ```lua
-   local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
+   local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
    ```
 
 ## Asset Management
@@ -43,7 +43,7 @@ The library includes placeholder asset IDs. For production use:
 
 ```lua
 -- Load the library
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxMENU/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
 
 -- Create a window
 local Window = Library:CreateWindow({
