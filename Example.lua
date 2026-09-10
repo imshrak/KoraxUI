@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/master/Library.lua"))()
+local Library = loadstring(readfile("Library.lua"))()
 
 local Toggles = Library.Toggles or {}
 local Options = Library.Options or {}

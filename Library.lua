@@ -561,6 +561,34 @@ function Library:CreateWindow(Info)
         end
     end)
 
+    Library:GiveSignal(UserInputService.InputChanged:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseWheel then
+            local MousePos = UserInputService:GetMouseLocation()
+            local MainPos = MainFrame.AbsolutePosition
+            local MainSize = MainFrame.AbsoluteSize
+            if MousePos.X >= MainPos.X and MousePos.X <= MainPos.X + MainSize.X
+                and MousePos.Y >= MainPos.Y and MousePos.Y <= MainPos.Y + MainSize.Y then
+                local scrollAmount = -Input.Position.Z * 20
+                for _, Tab in Library.Tabs do
+                    if Tab.Left and Tab.Left.Visible then
+                        local maxScroll = math.max(0, Tab.Left.CanvasSize.Y.Offset - Tab.Left.AbsoluteSize.Y)
+                        Tab.Left.CanvasPosition = Vector2.new(
+                            Tab.Left.CanvasPosition.X,
+                            math.clamp(Tab.Left.CanvasPosition.Y + scrollAmount, 0, maxScroll)
+                        )
+                    end
+                    if Tab.Right and Tab.Right.Visible then
+                        local maxScroll = math.max(0, Tab.Right.CanvasSize.Y.Offset - Tab.Right.AbsoluteSize.Y)
+                        Tab.Right.CanvasPosition = Vector2.new(
+                            Tab.Right.CanvasPosition.X,
+                            math.clamp(Tab.Right.CanvasPosition.Y + scrollAmount, 0, maxScroll)
+                        )
+                    end
+                end
+            end
+        end
+    end))
+
     local Window = {}
 
     function Window:Toggle(State)
@@ -600,15 +628,18 @@ function Library:CreateWindow(Info)
         })
 
         local TabLeft = New("ScrollingFrame", {
-            AutomaticCanvasSize = Enum.AutomaticSize.Y,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             CanvasSize = UDim2.fromScale(0, 0),
-            ScrollBarThickness = 0,
+            ScrollBarThickness = 3,
+            ScrollBarImageColor3 = "AccentColor",
+            ScrollBarImageTransparency = 0.5,
+            ScrollingDirection = Enum.ScrollingDirection.Y,
+            ElasticBehavior = Enum.ElasticBehavior.Always,
             Size = UDim2.new(0.5, -3, 1, 0),
             Parent = TabContainer,
         })
-        New("UIListLayout", { Padding = UDim.new(0, 2), Parent = TabLeft })
+        local TabLeftLayout = New("UIListLayout", { Padding = UDim.new(0, 2), Parent = TabLeft })
         New("UIPadding", {
             PaddingBottom = UDim.new(0, 2),
             PaddingLeft = UDim.new(0, 2),
@@ -616,19 +647,25 @@ function Library:CreateWindow(Info)
             PaddingTop = UDim.new(0, 2),
             Parent = TabLeft,
         })
+        Library:GiveSignal(TabLeftLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            TabLeft.CanvasSize = UDim2.new(0, 0, 0, TabLeftLayout.AbsoluteContentSize.Y + 4)
+        end))
 
         local TabRight = New("ScrollingFrame", {
             AnchorPoint = Vector2.new(1, 0),
-            AutomaticCanvasSize = Enum.AutomaticSize.Y,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             CanvasSize = UDim2.fromScale(0, 0),
             Position = UDim2.new(1, 0, 0, 0),
-            ScrollBarThickness = 0,
+            ScrollBarThickness = 3,
+            ScrollBarImageColor3 = "AccentColor",
+            ScrollBarImageTransparency = 0.5,
+            ScrollingDirection = Enum.ScrollingDirection.Y,
+            ElasticBehavior = Enum.ElasticBehavior.Always,
             Size = UDim2.new(0.5, -3, 1, 0),
             Parent = TabContainer,
         })
-        New("UIListLayout", { Padding = UDim.new(0, 2), Parent = TabRight })
+        local TabRightLayout = New("UIListLayout", { Padding = UDim.new(0, 2), Parent = TabRight })
         New("UIPadding", {
             PaddingBottom = UDim.new(0, 2),
             PaddingLeft = UDim.new(0, 2),
@@ -636,6 +673,9 @@ function Library:CreateWindow(Info)
             PaddingTop = UDim.new(0, 2),
             Parent = TabRight,
         })
+        Library:GiveSignal(TabRightLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            TabRight.CanvasSize = UDim2.new(0, 0, 0, TabRightLayout.AbsoluteContentSize.Y + 4)
+        end))
 
         local TabButton = New("TextButton", {
             BackgroundColor3 = "MainColor",
