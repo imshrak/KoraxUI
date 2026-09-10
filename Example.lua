@@ -252,98 +252,116 @@ end)
 
 -- ==================== SETTINGS TAB ====================
 
+local ThemePresets = {
+	Dark = {
+		BackgroundColor = Color3.fromRGB(15, 15, 15),
+		MainColor = Color3.fromRGB(25, 25, 25),
+		OutlineColor = Color3.fromRGB(40, 40, 40),
+		AccentColor = Color3.fromRGB(125, 85, 255),
+	},
+	Midnight = {
+		BackgroundColor = Color3.fromRGB(10, 10, 30),
+		MainColor = Color3.fromRGB(15, 15, 45),
+		OutlineColor = Color3.fromRGB(30, 30, 60),
+		AccentColor = Color3.fromRGB(100, 120, 255),
+	},
+	AMOLED = {
+		BackgroundColor = Color3.fromRGB(0, 0, 0),
+		MainColor = Color3.fromRGB(10, 10, 10),
+		OutlineColor = Color3.fromRGB(20, 20, 20),
+		AccentColor = Color3.fromRGB(125, 85, 255),
+	},
+	Rose = {
+		BackgroundColor = Color3.fromRGB(25, 10, 15),
+		MainColor = Color3.fromRGB(35, 15, 20),
+		OutlineColor = Color3.fromRGB(55, 25, 35),
+		AccentColor = Color3.fromRGB(255, 100, 130),
+	},
+	Ocean = {
+		BackgroundColor = Color3.fromRGB(10, 15, 25),
+		MainColor = Color3.fromRGB(15, 22, 35),
+		OutlineColor = Color3.fromRGB(25, 35, 55),
+		AccentColor = Color3.fromRGB(85, 180, 255),
+	},
+	Forest = {
+		BackgroundColor = Color3.fromRGB(10, 18, 12),
+		MainColor = Color3.fromRGB(15, 28, 18),
+		OutlineColor = Color3.fromRGB(25, 45, 30),
+		AccentColor = Color3.fromRGB(85, 200, 120),
+	},
+	Candy = {
+		BackgroundColor = Color3.fromRGB(25, 12, 22),
+		MainColor = Color3.fromRGB(35, 18, 30),
+		OutlineColor = Color3.fromRGB(55, 28, 48),
+		AccentColor = Color3.fromRGB(255, 100, 200),
+	},
+	Solar = {
+		BackgroundColor = Color3.fromRGB(20, 18, 12),
+		MainColor = Color3.fromRGB(30, 28, 18),
+		OutlineColor = Color3.fromRGB(50, 45, 28),
+		AccentColor = Color3.fromRGB(255, 180, 50),
+	},
+}
+
+local AccentPresets = {
+	Purple = Color3.fromRGB(125, 85, 255),
+	Blue = Color3.fromRGB(85, 140, 255),
+	Red = Color3.fromRGB(255, 85, 85),
+	Green = Color3.fromRGB(85, 200, 85),
+	Orange = Color3.fromRGB(255, 160, 50),
+	Cyan = Color3.fromRGB(85, 200, 255),
+	Pink = Color3.fromRGB(255, 100, 180),
+	Yellow = Color3.fromRGB(255, 220, 60),
+	Teal = Color3.fromRGB(60, 200, 180),
+	Crimson = Color3.fromRGB(220, 60, 80),
+}
+
+local FontPresets = {
+	"Code",
+	"Gotham",
+	"GothamBold",
+	"Roboto",
+	"RobotoMono",
+	"SourceSans",
+	"Ubuntu",
+}
+
+local KeyPresets = {
+	"RightControl", "LeftAlt", "Tab", "F2", "F3", "F4",
+	"F5", "F6", "Backquote", "Semicolon",
+}
+
 -- ==================== APPEARANCE (Left) ====================
 local AppearanceGroup = Tabs.Settings:AddGroupbox({
 	Side = 1,
 	Name = "Appearance",
 	IconName = "eye",
+	Description = "Customize the look and feel",
 })
 
 AppearanceGroup:AddDropdown("Theme", {
-	Text = "Theme",
-	Values = {"Dark", "Midnight", "AMOLED", "Light", "Rose", "Ocean"},
+	Text = "Theme Preset",
+	Values = {"Dark", "Midnight", "AMOLED", "Rose", "Ocean", "Forest", "Candy", "Solar"},
 	Value = "Dark",
 	Callback = function(Value)
-		local Schemes = {
-			Dark = {
-				BackgroundColor = Color3.fromRGB(15, 15, 15),
-				MainColor = Color3.fromRGB(25, 25, 25),
-				OutlineColor = Color3.fromRGB(40, 40, 40),
-			},
-			Midnight = {
-				BackgroundColor = Color3.fromRGB(10, 10, 30),
-				MainColor = Color3.fromRGB(15, 15, 45),
-				OutlineColor = Color3.fromRGB(30, 30, 60),
-			},
-			AMOLED = {
-				BackgroundColor = Color3.fromRGB(0, 0, 0),
-				MainColor = Color3.fromRGB(10, 10, 10),
-				OutlineColor = Color3.fromRGB(20, 20, 20),
-			},
-			Light = {
-				BackgroundColor = Color3.fromRGB(235, 235, 235),
-				MainColor = Color3.fromRGB(250, 250, 250),
-				OutlineColor = Color3.fromRGB(200, 200, 200),
-			},
-			Rose = {
-				BackgroundColor = Color3.fromRGB(25, 10, 15),
-				MainColor = Color3.fromRGB(35, 15, 20),
-				OutlineColor = Color3.fromRGB(55, 25, 35),
-			},
-			Ocean = {
-				BackgroundColor = Color3.fromRGB(10, 15, 25),
-				MainColor = Color3.fromRGB(15, 22, 35),
-				OutlineColor = Color3.fromRGB(25, 35, 55),
-			},
-		}
-		local Scheme = Schemes[Value]
+		local Scheme = ThemePresets[Value]
 		if Scheme then
 			for k, v in Scheme do
 				Library.Scheme[k] = v
 			end
-			Library:Notify({Title = "Theme", Text = "Applied " .. Value .. " theme", Time = 2})
+			Library:Notify({Title = "Appearance", Text = "Applied " .. Value .. " theme", Time = 2})
 		end
 	end,
 })
 
 AppearanceGroup:AddDropdown("Accent", {
 	Text = "Accent Color",
-	Values = {"Purple", "Blue", "Red", "Green", "Orange", "Cyan", "Pink"},
+	Values = {"Purple", "Blue", "Red", "Green", "Orange", "Cyan", "Pink", "Yellow", "Teal", "Crimson"},
 	Value = "Purple",
 	Callback = function(Value)
-		local Colors = {
-			Purple = Color3.fromRGB(125, 85, 255),
-			Blue = Color3.fromRGB(85, 140, 255),
-			Red = Color3.fromRGB(255, 85, 85),
-			Green = Color3.fromRGB(85, 200, 85),
-			Orange = Color3.fromRGB(255, 160, 50),
-			Cyan = Color3.fromRGB(85, 200, 255),
-			Pink = Color3.fromRGB(255, 100, 180),
-		}
-		if Colors[Value] then
-			Library.Scheme.AccentColor = Colors[Value]
-			Library:Notify({Title = "Accent", Text = "Changed accent to " .. Value, Time = 2})
-		end
-	end,
-})
-
-AppearanceGroup:AddDropdown("MenuToggleKey", {
-	Text = "Menu Toggle Key",
-	Values = {"RightControl", "LeftAlt", "Tab", "F2", "F3", "F4", "Semicolon"},
-	Value = "RightControl",
-	Callback = function(Value)
-		local KeyMap = {
-			RightControl = Enum.KeyCode.RightControl,
-			LeftAlt = Enum.KeyCode.LeftAlt,
-			Tab = Enum.KeyCode.Tab,
-			F2 = Enum.KeyCode.F2,
-			F3 = Enum.KeyCode.F3,
-			F4 = Enum.KeyCode.F4,
-			Semicolon = Enum.KeyCode.Semicolon,
-		}
-		if KeyMap[Value] then
-			Library.ToggleKeybind = KeyMap[Value]
-			Library:Notify({Title = "Keybind", Text = "Menu toggles with " .. Value, Time = 2})
+		if AccentPresets[Value] then
+			Library.Scheme.AccentColor = AccentPresets[Value]
+			Library:Notify({Title = "Appearance", Text = "Accent: " .. Value, Time = 1.5})
 		end
 	end,
 })
@@ -359,56 +377,71 @@ AppearanceGroup:AddSlider("MenuKeybind", {
 	end,
 })
 
--- ==================== TOGGLES / BEHAVIOR (Left) ====================
-local BehaviorGroup = Tabs.Settings:AddGroupbox({
-	Side = 1,
-	Name = "Behavior",
-	IconName = "settings",
-})
-
-BehaviorGroup:AddToggle("AutoShow", {
-	Text = "Auto-show menu on join",
-	Default = true,
+AppearanceGroup:AddDropdown("MenuToggleKey", {
+	Text = "Menu Toggle Key",
+	Values = KeyPresets,
+	Value = "RightControl",
 	Callback = function(Value)
-		Library:Notify({Title = "Behavior", Text = Value and "Menu will auto-show" or "Menu won't auto-show", Time = 2})
-	end,
-})
-
-BehaviorGroup:AddToggle("ShowKeybinds", {
-	Text = "Show keybind buttons",
-	Default = true,
-	Callback = function(Value)
-		for _, toggle in Toggles do
-			if toggle and toggle.KeybindBtn then
-				toggle.KeybindBtn.Visible = Value and toggle.Keybind ~= nil
-			end
+		local KeyMap = {}
+		for _, name in KeyPresets do
+			local ok, kc = pcall(function() return Enum.KeyCode[name] end)
+			if ok then KeyMap[name] = kc end
+		end
+		if KeyMap[Value] then
+			Library.ToggleKeybind = KeyMap[Value]
+			Library:Notify({Title = "Keybind", Text = "Menu toggles with " .. Value, Time = 1.5})
 		end
 	end,
 })
 
-BehaviorGroup:AddToggle("SoundEffects", {
-	Text = "Sound effects",
+-- ==================== EDITOR (Left) ====================
+local EditorGroup = Tabs.Settings:AddGroupbox({
+	Side = 1,
+	Name = "Editor",
+	IconName = "edit",
+	Description = "Editor and interface settings",
+})
+
+EditorGroup:AddDropdown("Font", {
+	Text = "UI Font",
+	Values = FontPresets,
+	Value = "Code",
+	Callback = function(Value)
+		local ok, font = pcall(function() return Font.fromEnum(Enum.Font[Value]) end)
+		if ok and font then
+			Library.Scheme.Font = font
+			Library:Notify({Title = "Editor", Text = "Font: " .. Value, Time = 1.5})
+		end
+	end,
+})
+
+EditorGroup:AddSlider("FontSize", {
+	Text = "Font Size",
+	Default = 14,
+	Min = 10,
+	Max = 20,
+	Suffix = "px",
+})
+
+EditorGroup:AddSlider("CornerSize", {
+	Text = "Corner Radius",
+	Default = 4,
+	Min = 0,
+	Max = 12,
+	Suffix = "px",
+})
+
+EditorGroup:AddToggle("CompactMode", {
+	Text = "Compact Mode",
 	Default = false,
 	Callback = function(Value)
-		Library:Notify({Title = "Sound", Text = Value and "Sound effects enabled" or "Sound effects disabled", Time = 2})
+		Library:Notify({Title = "Editor", Text = Value and "Compact mode on" or "Compact mode off", Time = 1.5})
 	end,
 })
 
-BehaviorGroup:AddSlider("NotifDuration", {
-	Text = "Notification Duration",
-	Default = 3,
-	Min = 1,
-	Max = 10,
-	Suffix = "s",
-})
-
-BehaviorGroup:AddDropdown("NotifSide", {
-	Text = "Notification Position",
-	Values = {"Right", "Left"},
-	Value = "Right",
-	Callback = function(Value)
-		Library.NotifySide = Value
-	end,
+EditorGroup:AddToggle("AnimatedToggles", {
+	Text = "Animated Toggles",
+	Default = true,
 })
 
 -- ==================== KEYBINDS (Left) ====================
@@ -416,9 +449,10 @@ local KeybindGroup = Tabs.Settings:AddGroupbox({
 	Side = 1,
 	Name = "Keybinds",
 	IconName = "lock",
+	Description = "Manage all keybinds",
 })
 
-KeybindGroup:AddLabel("Click a keybind button next to a toggle to rebind. Right-click to clear.")
+KeybindGroup:AddLabel("Click a keybind button to rebind. Right-click to clear.")
 
 local function RefreshKeybindLabels()
 	for _, child in ipairs(KeybindGroup.Container:GetChildren()) do
@@ -428,7 +462,7 @@ local function RefreshKeybindLabels()
 	end
 	for idx, bind in Library.Keybinds do
 		if bind and bind.KeyCode then
-			KeybindGroup:AddLabel(idx .. "  ->  " .. bind.KeyCode.Name)
+			KeybindGroup:AddLabel(idx .. "  →  " .. bind.KeyCode.Name)
 				.Holder.Name = "KBEntry"
 		end
 	end
@@ -438,7 +472,7 @@ KeybindGroup:AddButton({
 	Text = "Refresh Keybind List",
 	Func = function()
 		RefreshKeybindLabels()
-		Library:Notify({Title = "Keybinds", Text = "Keybind list refreshed", Time = 1.5})
+		Library:Notify({Title = "Keybinds", Text = "List refreshed", Time = 1.5})
 	end,
 })
 
@@ -461,18 +495,50 @@ local ConfigGroup = Tabs.Settings:AddGroupbox({
 	Side = 2,
 	Name = "Configuration",
 	IconName = "save",
+	Description = "Save, load, and manage configs",
 })
 
-local ConfigName = ConfigGroup:AddInput("ConfigName", {
+ConfigGroup:AddDropdown("SavedConfigs", {
+	Text = "Saved Configs",
+	Values = {"default"},
+	Value = "default",
+})
+
+ConfigGroup:AddInput("ConfigName", {
 	Text = "Config Name",
 	Default = "default",
 	Placeholder = "Enter config name...",
 })
 
+local function RefreshConfigList()
+	local configs = {}
+	if isfolder("KoraxUI_Configs") then
+		local ok, files = pcall(function() return listfiles("KoraxUI_Configs") end)
+		if ok and files then
+			for _, file in files do
+				local name = file:match("([^/\\]+)%.json$")
+				if name then
+					table.insert(configs, name)
+				end
+			end
+		end
+	end
+	if #configs == 0 then
+		configs = {"default"}
+	end
+	if Options.SavedConfigs then
+		Options.SavedConfigs:SetValues(configs)
+		Options.SavedConfigs:SetValue(configs[1])
+	end
+end
+
 ConfigGroup:AddButton({
 	Text = "Save Config",
 	Func = function()
 		local name = Options.ConfigName and Options.ConfigName.Value or "default"
+		if not isfolder("KoraxUI_Configs") then
+			pcall(function() makefolder("KoraxUI_Configs") end)
+		end
 		local config = {}
 		for idx, toggle in Toggles do
 			if typeof(toggle) == "table" and toggle.Value ~= nil then
@@ -483,26 +549,30 @@ ConfigGroup:AddButton({
 			end
 		end
 		for idx, option in Options do
-			if typeof(option) == "table" and option.Value ~= nil and idx ~= "ConfigName" then
+			if typeof(option) == "table" and option.Value ~= nil and idx ~= "ConfigName" and idx ~= "SavedConfigs" then
 				config[idx] = { Value = option.Value }
 			end
 		end
+		config._theme = Options.Theme and Options.Theme.Value or "Dark"
+		config._accent = Options.Accent and Options.Accent.Value or "Purple"
 		writefile("KoraxUI_Configs/" .. name .. ".json", game:GetService("HttpService"):JSONEncode(config))
-		Library:Notify({Title = "Config", Text = "Saved config: " .. name, Time = 2})
+		RefreshConfigList()
+		Library:Notify({Title = "Config", Text = "Saved: " .. name, Time = 2})
 	end,
 })
 
 ConfigGroup:AddButton({
 	Text = "Load Config",
 	Func = function()
-		local name = Options.ConfigName and Options.ConfigName.Value or "default"
+		local name = Options.SavedConfigs and Options.SavedConfigs.Value or (Options.ConfigName and Options.ConfigName.Value or "default")
 		local path = "KoraxUI_Configs/" .. name .. ".json"
 		if not isfile(path) then
-			Library:Notify({Title = "Config", Text = "Config not found: " .. name, Time = 2})
+			Library:Notify({Title = "Config", Text = "Not found: " .. name, Time = 2})
 			return
 		end
 		local config = game:GetService("HttpService"):JSONDecode(readfile(path))
 		for idx, data in config do
+			if idx:sub(1, 1) == "_" then continue end
 			if Toggles[idx] and typeof(Toggles[idx]) == "table" and Toggles[idx].SetValue then
 				Toggles[idx]:SetValue(data.Value)
 				if data.Keybind then
@@ -514,20 +584,23 @@ ConfigGroup:AddButton({
 				Options[idx]:SetValue(data.Value)
 			end
 		end
-		Library:Notify({Title = "Config", Text = "Loaded config: " .. name, Time = 2})
+		if config._theme and Options.Theme then Options.Theme:SetValue(config._theme) end
+		if config._accent and Options.Accent then Options.Accent:SetValue(config._accent) end
+		Library:Notify({Title = "Config", Text = "Loaded: " .. name, Time = 2})
 	end,
 })
 
 ConfigGroup:AddButton({
 	Text = "Delete Config",
 	Func = function()
-		local name = Options.ConfigName and Options.ConfigName.Value or "default"
+		local name = Options.SavedConfigs and Options.SavedConfigs.Value or "default"
 		local path = "KoraxUI_Configs/" .. name .. ".json"
 		if isfile(path) then
 			delfile(path)
-			Library:Notify({Title = "Config", Text = "Deleted config: " .. name, Time = 2})
+			RefreshConfigList()
+			Library:Notify({Title = "Config", Text = "Deleted: " .. name, Time = 2})
 		else
-			Library:Notify({Title = "Config", Text = "Config not found: " .. name, Time = 2})
+			Library:Notify({Title = "Config", Text = "Not found: " .. name, Time = 2})
 		end
 	end,
 	Risky = true,
@@ -542,70 +615,60 @@ ConfigGroup:AddButton({
 			end
 		end
 		for idx, option in Options do
-			if typeof(option) == "table" and option.SetValue and idx ~= "ConfigName" then
+			if typeof(option) == "table" and option.SetValue and idx ~= "ConfigName" and idx ~= "SavedConfigs" then
 				if idx == "Theme" then option:SetValue("Dark")
 				elseif idx == "Accent" then option:SetValue("Purple")
 				elseif idx == "MenuToggleKey" then option:SetValue("RightControl")
 				elseif idx == "MenuKeybind" then option:SetValue(100)
-				elseif idx == "NotifDuration" then option:SetValue(3)
-				elseif idx == "NotifSide" then option:SetValue("Right") end
+				elseif idx == "Font" then option:SetValue("Code")
+				elseif idx == "FontSize" then option:SetValue(14)
+				elseif idx == "CornerSize" then option:SetValue(4) end
 			end
 		end
-		Library.Scheme.AccentColor = Color3.fromRGB(125, 85, 255)
-		Library.Scheme.BackgroundColor = Color3.fromRGB(15, 15, 15)
-		Library.Scheme.MainColor = Color3.fromRGB(25, 25, 25)
-		Library.Scheme.OutlineColor = Color3.fromRGB(40, 40, 40)
+		Library.Scheme.AccentColor = ThemePresets.Dark.AccentColor
+		Library.Scheme.BackgroundColor = ThemePresets.Dark.BackgroundColor
+		Library.Scheme.MainColor = ThemePresets.Dark.MainColor
+		Library.Scheme.OutlineColor = ThemePresets.Dark.OutlineColor
+		Library:SetOpacity(1)
 		Library:Notify({Title = "Config", Text = "Reset to defaults", Time = 2})
 	end,
 	Risky = true,
 })
-
--- ==================== INFORMATION (Right) ====================
-local InfoGroup = Tabs.Settings:AddGroupbox({
-	Side = 2,
-	Name = "Information",
-	IconName = "info",
-})
-
-InfoGroup:AddLabel("KoraxUI v1.0")
-
-InfoGroup:AddButton({
-	Text = "Copy Discord Link",
-	Func = function()
-		if setclipboard then
-			setclipboard("https://discord.gg/koraxui")
-			Library:Notify({Title = "Discord", Text = "Discord link copied!", Time = 2})
-		end
-	end,
-})
-
-InfoGroup:AddButton({
-	Text = "Copy GitHub Link",
-	Func = function()
-		if setclipboard then
-			setclipboard("https://github.com/imshrak/KoraxUI")
-			Library:Notify({Title = "GitHub", Text = "GitHub link copied!", Time = 2})
-		end
-	end,
-})
-
-InfoGroup:AddButton({
-	Text = "Join Discord Server",
-	Func = function()
-		if request then
-			request({Url = "https://discord.gg/koraxui", Method = "GET"})
-		end
-	end,
-})
-
-InfoGroup:AddLabel("Player: " .. LocalPlayer.Name)
-InfoGroup:AddLabel("User ID: " .. LocalPlayer.UserId)
 
 -- ==================== NOTIFICATIONS (Right) ====================
 local NotifGroup = Tabs.Settings:AddGroupbox({
 	Side = 2,
 	Name = "Notifications",
 	IconName = "bell",
+	Description = "Notification preferences",
+})
+
+NotifGroup:AddDropdown("NotifSide", {
+	Text = "Position",
+	Values = {"Right", "Left"},
+	Value = "Right",
+	Callback = function(Value)
+		Library.NotifySide = Value
+	end,
+})
+
+NotifGroup:AddSlider("NotifDuration", {
+	Text = "Duration",
+	Default = 3,
+	Min = 1,
+	Max = 10,
+	Suffix = "s",
+})
+
+NotifGroup:AddDropdown("NotifStyle", {
+	Text = "Style",
+	Values = {"Default", "Minimal", "Detailed"},
+	Value = "Default",
+})
+
+NotifGroup:AddToggle("NotifSound", {
+	Text = "Sound",
+	Default = false,
 })
 
 NotifGroup:AddButton({
@@ -616,7 +679,7 @@ NotifGroup:AddButton({
 })
 
 NotifGroup:AddButton({
-	Text = "Clear All Notifications",
+	Text = "Clear All",
 	Func = function()
 		for _, notif in Library.Notifications do
 			if notif and notif.Parent then notif:Destroy() end
@@ -625,20 +688,35 @@ NotifGroup:AddButton({
 	end,
 })
 
-NotifGroup:AddDropdown("NotifStyle", {
-	Text = "Notification Style",
-	Values = {"Default", "Minimal", "Detailed"},
-	Value = "Default",
-	Callback = function(Value)
-		Library:Notify({Title = "Style", Text = "Notification style: " .. Value, Time = 2})
+-- ==================== ABOUT (Right) ====================
+local AboutGroup = Tabs.Settings:AddGroupbox({
+	Side = 2,
+	Name = "About",
+	IconName = "info",
+	Description = "KoraxUI information",
+})
+
+AboutGroup:AddLabel("KoraxUI v1.0")
+AboutGroup:AddLabel("Player: " .. LocalPlayer.Name)
+AboutGroup:AddLabel("User ID: " .. LocalPlayer.UserId)
+
+AboutGroup:AddButton({
+	Text = "Copy Discord Link",
+	Func = function()
+		if setclipboard then
+			setclipboard("https://discord.gg/koraxui")
+			Library:Notify({Title = "Link", Text = "Discord link copied!", Time = 1.5})
+		end
 	end,
 })
 
-NotifGroup:AddToggle("NotifSound", {
-	Text = "Notification Sound",
-	Default = false,
-	Callback = function(Value)
-		Library:Notify({Title = "Sound", Text = Value and "Notification sounds on" or "Notification sounds off", Time = 1.5})
+AboutGroup:AddButton({
+	Text = "Copy GitHub Link",
+	Func = function()
+		if setclipboard then
+			setclipboard("https://github.com/imshrak/KoraxUI")
+			Library:Notify({Title = "Link", Text = "GitHub link copied!", Time = 1.5})
+		end
 	end,
 })
 
@@ -654,6 +732,7 @@ end)
 if not isfolder("KoraxUI_Configs") then
 	pcall(function() makefolder("KoraxUI_Configs") end)
 end
+RefreshConfigList()
 
 print("KoraxUI Example loaded!")
 print("Press RightControl to toggle the menu")
