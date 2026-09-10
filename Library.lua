@@ -376,29 +376,25 @@ function Library:SetOpacity(Value)
     local MainFrame = Library.Window
     if not MainFrame then return end
     local trans = 1 - Value
-    if not Library._OpacityCache then
-        Library._OpacityCache = {}
-        for _, Obj in MainFrame:GetDescendants() do
-            if Obj:IsA("GuiObject") then
-                Library._OpacityCache[Obj] = Obj.BackgroundTransparency
-            elseif Obj:IsA("UIStroke") then
-                Library._OpacityCache[Obj] = Obj.Transparency
-            elseif Obj:IsA("ScrollingFrame") then
-                Library._OpacityCache[Obj] = Obj.ScrollBarImageTransparency
+
+    local function ApplyOpacity(Obj)
+        if not Obj or not Obj.Parent then return end
+        if Obj:IsA("GuiObject") then
+            if Obj.BackgroundTransparency < 1 then
+                Obj.BackgroundTransparency = trans
             end
+        elseif Obj:IsA("UIStroke") then
+            if Obj.Transparency < 1 then
+                Obj.Transparency = trans
+            end
+        elseif Obj:IsA("ScrollingFrame") and Obj.ScrollBarThickness > 0 then
+            Obj.ScrollBarImageTransparency = trans
         end
-        Library._OpacityCache[MainFrame] = MainFrame.BackgroundTransparency
     end
-    for Obj, origTrans in Library._OpacityCache do
-        if Obj and Obj.Parent then
-            if Obj:IsA("GuiObject") then
-                Obj.BackgroundTransparency = math.clamp(origTrans + trans, 0, 1)
-            elseif Obj:IsA("UIStroke") then
-                Obj.Transparency = math.clamp(origTrans + trans, 0, 1)
-            elseif Obj:IsA("ScrollingFrame") then
-                Obj.ScrollBarImageTransparency = math.clamp(origTrans + trans, 0, 1)
-            end
-        end
+
+    ApplyOpacity(MainFrame)
+    for _, Obj in MainFrame:GetDescendants() do
+        ApplyOpacity(Obj)
     end
 end
 
