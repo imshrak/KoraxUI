@@ -28,31 +28,44 @@ local MoveGroup = Tabs.Movement:AddGroupbox({
 })
 
 local FlightConnection = nil
+local FlightAnim = nil
 MoveGroup:AddToggle("Flight", {
     Text = "Flight",
     Default = false,
     Callback = function(Value)
         local character = LocalPlayer.Character
         local hrp = character and character:FindFirstChild("HumanoidRootPart")
-        if not hrp then return end
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+        if not hrp or not humanoid then return end
 
         if Value then
             local bv = Instance.new("BodyVelocity")
             bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
             bv.Velocity = Vector3.zero
+            bv.P = 1e4
             bv.Name = "KoraxFlight"
             bv.Parent = hrp
 
             local bg = Instance.new("BodyGyro")
             bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-            bg.P = 9e4
+            bg.P = 5e4
+            bg.D = 500
             bg.Name = "KoraxFlightGyro"
             bg.Parent = hrp
 
-            FlightConnection = RunService.RenderStepped:Connect(function()
+            humanoid.PlatformStand = true
+            humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+            local rayParams = RaycastParams.new()
+            rayParams.FilterType = Enum.RaycastFilterType.Exclude
+            rayParams.FilterDescendantsInstances = {character}
+
+            local lastVelocity = Vector3.zero
+
+            FlightConnection = RunService.RenderStepped:Connect(function(dt)
                 local bv = hrp:FindFirstChild("KoraxFlight")
                 local bg = hrp:FindFirstChild("KoraxFlightGyro")
-                if not bv or not bg then return end
+                if not bv or not bg or not hrp.Parent then return end
 
                 local speed = Toggles.FlightSpeed and Toggles.FlightSpeed.Value or 50
                 local cam = workspace.CurrentCamera
@@ -66,20 +79,50 @@ MoveGroup:AddToggle("Flight", {
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then dir = dir + Vector3.new(0, 1, 0) end
                 if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then dir = dir - Vector3.new(0, 1, 0) end
 
-                if dir.Magnitude > 0 then dir = dir.Unit end
-                bv.Velocity = dir * speed
-                bg.CFrame = cf
+                if dir.Magnitude > 0 then
+                    dir = dir.Unit
+                end
+
+                local targetVelocity = dir * speed
+                local smoothSpeed = 10 * dt
+                lastVelocity = lastVelocity:Lerp(targetVelocity, math.clamp(smoothSpeed, 0, 1))
+                bv.Velocity = lastVelocity
+
+                local targetCF = cf * CFrame.Angles(0, 0, 0)
+                local currentCF = hrp.CFrame
+                local targetLook = targetCF.LookVector
+                local targetRight = targetCF.RightVector
+                local targetUp = targetCF.UpVector
+
+                if dir.Magnitude > 0 then
+                    local moveCF = CFrame.lookAt(Vector3.zero, dir)
+                    local blendedCF = CFrame.fromMatrix(
+                        Vector3.zero,
+                        currentCF.RightVector:Lerp(moveCF.RightVector, 6 * dt),
+                        currentCF.UpVector:Lerp(moveCF.UpVector, 6 * dt),
+                        currentCF.LookVector:Lerp(moveCF.LookVector, 6 * dt)
+                    )
+                    bg.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + blendedCF.LookVector, blendedCF.UpVector)
+                else
+                    bg.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + currentCF.LookVector, Vector3.new(0, 1, 0))
+                end
             end)
         else
             if FlightConnection then
                 FlightConnection:Disconnect()
                 FlightConnection = nil
             end
+
             if hrp then
                 local bv = hrp:FindFirstChild("KoraxFlight")
                 if bv then bv:Destroy() end
                 local bg = hrp:FindFirstChild("KoraxFlightGyro")
                 if bg then bg:Destroy() end
+            end
+
+            if humanoid then
+                humanoid.PlatformStand = false
+                humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
             end
         end
     end,
