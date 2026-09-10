@@ -582,6 +582,13 @@ local Templates = {
         Visible = true,
     },
 
+    Button = {
+        Text = "Button",
+        Func = function() end,
+        Disabled = false,
+        Visible = true,
+    },
+
     --// Addons \\-
     KeyPicker = {
         Text = "KeyPicker",
@@ -1309,8 +1316,8 @@ function Library:CreateWindow(Info)
             }
 
             -- Add basic element methods
-            function Group:AddToggle(Idx, Options)
-                Options = Library:Validate(Options, Templates.Toggle)
+            function Group:AddToggle(Idx, ToggleOptions)
+                ToggleOptions = Library:Validate(ToggleOptions, Templates.Toggle)
                 
                 local Toggle = New("Frame", {
                     BackgroundColor3 = "BackgroundColor",
@@ -1327,8 +1334,8 @@ function Library:CreateWindow(Info)
                     BackgroundTransparency = 1,
                     Position = UDim2.fromOffset(8, 0),
                     Size = UDim2.new(1, -40, 1, 0),
-                    Text = Options.Text,
-                    TextColor3 = Options.Risky and "RedColor" or "FontColor",
+                    Text = ToggleOptions.Text,
+                    TextColor3 = ToggleOptions.Risky and "RedColor" or "FontColor",
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     FontFace = "Font",
@@ -1349,15 +1356,15 @@ function Library:CreateWindow(Info)
                 })
 
                 local ToggleObj = {
-                    Value = Options.Default,
+                    Value = ToggleOptions.Default,
                     Index = Idx,
                 }
 
                 function ToggleObj:SetValue(Value)
                     ToggleObj.Value = Value
                     ToggleButton.BackgroundColor3 = Value and Library.Scheme.AccentColor or Library.Scheme.MainColor
-                    if Options.Callback then
-                        Options.Callback(Value)
+                    if ToggleOptions.Callback then
+                        ToggleOptions.Callback(Value)
                     end
                 end
 
@@ -1366,18 +1373,18 @@ function Library:CreateWindow(Info)
                 end)
 
                 Toggles[Idx] = ToggleObj
-                ToggleObj:SetValue(Options.Default)
+                ToggleObj:SetValue(ToggleOptions.Default)
 
                 return ToggleObj
             end
 
-            function Group:AddButton(Options)
-                Options = Library:Validate(Options, Templates.Button or {})
+            function Group:AddButton(ButtonOptions)
+                ButtonOptions = Library:Validate(ButtonOptions, Templates.Button or {})
                 
                 local Button = New("TextButton", {
                     BackgroundColor3 = "MainColor",
                     Size = UDim2.new(1, 0, 0, 28),
-                    Text = Options.Text or "Button",
+                    Text = ButtonOptions.Text or "Button",
                     TextColor3 = "FontColor",
                     TextSize = 13,
                     FontFace = "Font",
@@ -1390,8 +1397,8 @@ function Library:CreateWindow(Info)
                 })
 
                 Button.MouseButton1Click:Connect(function()
-                    if Options.Func then
-                        Options.Func()
+                    if ButtonOptions.Func then
+                        ButtonOptions.Func()
                     end
                 end)
 
@@ -1413,8 +1420,8 @@ function Library:CreateWindow(Info)
                 return Label
             end
 
-            function Group:AddSlider(Idx, Options)
-                Options = Library:Validate(Options, Templates.Slider)
+            function Group:AddSlider(Idx, SliderOptions)
+                SliderOptions = Library:Validate(SliderOptions, Templates.Slider)
                 
                 local Slider = New("Frame", {
                     BackgroundColor3 = "BackgroundColor",
@@ -1431,7 +1438,7 @@ function Library:CreateWindow(Info)
                     BackgroundTransparency = 1,
                     Position = UDim2.fromOffset(8, 0),
                     Size = UDim2.new(1, -16, 0, 18),
-                    Text = Options.Text,
+                    Text = SliderOptions.Text,
                     TextColor3 = "FontColor",
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left,
@@ -1443,7 +1450,7 @@ function Library:CreateWindow(Info)
                     BackgroundTransparency = 1,
                     Position = UDim2.new(1, -60, 0, 0),
                     Size = UDim2.fromOffset(52, 18),
-                    Text = tostring(Options.Default),
+                    Text = tostring(SliderOptions.Default),
                     TextColor3 = "FontColor",
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Right,
@@ -1475,24 +1482,24 @@ function Library:CreateWindow(Info)
                 })
 
                 local SliderObj = {
-                    Value = Options.Default,
+                    Value = SliderOptions.Default,
                     Index = Idx,
                 }
 
                 function SliderObj:SetValue(Value)
-                    Value = math.clamp(Value, Options.Min, Options.Max)
+                    Value = math.clamp(Value, SliderOptions.Min, SliderOptions.Max)
                     SliderObj.Value = Value
-                    SliderValue.Text = tostring(Round(Value, Options.Rounding))
-                    local Percent = (Value - Options.Min) / (Options.Max - Options.Min)
+                    SliderValue.Text = tostring(Round(Value, SliderOptions.Rounding))
+                    local Percent = (Value - SliderOptions.Min) / (SliderOptions.Max - SliderOptions.Min)
                     SliderFill.Size = UDim2.fromScale(Percent, 1)
-                    if Options.Callback then
-                        Options.Callback(Value)
+                    if SliderOptions.Callback then
+                        SliderOptions.Callback(Value)
                     end
                 end
 
                 local function UpdateSlider(input)
                     local Scale = (input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X
-                    local Value = Options.Min + (Scale * (Options.Max - Options.Min))
+                    local Value = SliderOptions.Min + (Scale * (SliderOptions.Max - SliderOptions.Min))
                     SliderObj:SetValue(Value)
                 end
 
@@ -1511,13 +1518,13 @@ function Library:CreateWindow(Info)
                 end)
 
                 Options[Idx] = SliderObj
-                SliderObj:SetValue(Options.Default)
+                SliderObj:SetValue(SliderOptions.Default)
 
                 return SliderObj
             end
 
-            function Group:AddInput(Idx, Options)
-                Options = Library:Validate(Options, Templates.Input)
+            function Group:AddInput(Idx, InputOptions)
+                InputOptions = Library:Validate(InputOptions, Templates.Input)
                 
                 local Input = New("Frame", {
                     BackgroundColor3 = "BackgroundColor",
@@ -1534,7 +1541,7 @@ function Library:CreateWindow(Info)
                     BackgroundTransparency = 1,
                     Position = UDim2.fromOffset(8, 0),
                     Size = UDim2.new(1, -16, 0, 16),
-                    Text = Options.Text,
+                    Text = InputOptions.Text,
                     TextColor3 = "FontColor",
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left,
@@ -1546,8 +1553,8 @@ function Library:CreateWindow(Info)
                     BackgroundColor3 = "MainColor",
                     Position = UDim2.fromOffset(8, 18),
                     Size = UDim2.new(1, -16, 0, 14),
-                    PlaceholderText = Options.Placeholder,
-                    Text = Options.Default,
+                    PlaceholderText = InputOptions.Placeholder,
+                    Text = InputOptions.Default,
                     TextColor3 = "FontColor",
                     TextSize = 13,
                     FontFace = "Font",
@@ -1560,20 +1567,20 @@ function Library:CreateWindow(Info)
                 })
 
                 local InputObj = {
-                    Value = Options.Default,
+                    Value = InputOptions.Default,
                     Index = Idx,
                 }
 
                 function InputObj:SetValue(Value)
                     InputObj.Value = Value
                     InputBox.Text = Value
-                    if Options.Callback then
-                        Options.Callback(Value)
+                    if InputOptions.Callback then
+                        InputOptions.Callback(Value)
                     end
                 end
 
                 InputBox.FocusLost:Connect(function(enterPressed)
-                    if enterPressed or not Options.ClearTextOnFocus then
+                    if enterPressed or not InputOptions.ClearTextOnFocus then
                         InputObj:SetValue(InputBox.Text)
                     end
                 end)
@@ -1583,8 +1590,8 @@ function Library:CreateWindow(Info)
                 return InputObj
             end
 
-            function Group:AddDropdown(Idx, Options)
-                Options = Library:Validate(Options, Templates.Dropdown)
+            function Group:AddDropdown(Idx, DropdownOptions)
+                DropdownOptions = Library:Validate(DropdownOptions, Templates.Dropdown)
                 
                 local Dropdown = New("Frame", {
                     BackgroundColor3 = "BackgroundColor",
@@ -1600,7 +1607,7 @@ function Library:CreateWindow(Info)
                 local DropdownButton = New("TextButton", {
                     BackgroundColor3 = "MainColor",
                     Size = UDim2.new(1, 0, 0, 28),
-                    Text = Options.Text or "Dropdown",
+                    Text = DropdownOptions.Text or "Dropdown",
                     TextColor3 = "FontColor",
                     TextSize = 13,
                     TextXAlignment = Enum.TextXAlignment.Left,
@@ -1621,28 +1628,28 @@ function Library:CreateWindow(Info)
                 local DropdownObj = {
                     Value = nil,
                     Index = Idx,
-                    Options = Options.Values,
+                    Options = DropdownOptions.Values,
                 }
 
                 function DropdownObj:SetValue(Value)
                     DropdownObj.Value = Value
-                    DropdownButton.Text = Options.Text .. ": " .. tostring(Value)
-                    if Options.Callback then
-                        Options.Callback(Value)
+                    DropdownButton.Text = DropdownOptions.Text .. ": " .. tostring(Value)
+                    if DropdownOptions.Callback then
+                        DropdownOptions.Callback(Value)
                     end
                 end
 
                 DropdownButton.MouseButton1Click:Connect(function()
                     -- Simple dropdown implementation - in a full version, this would show a dropdown menu
                     -- For now, cycle through values
-                    local currentIndex = table.find(Options.Values, DropdownObj.Value) or 0
-                    local nextIndex = (currentIndex % #Options.Values) + 1
-                    DropdownObj:SetValue(Options.Values[nextIndex])
+                    local currentIndex = table.find(DropdownOptions.Values, DropdownObj.Value) or 0
+                    local nextIndex = (currentIndex % #DropdownOptions.Values) + 1
+                    DropdownObj:SetValue(DropdownOptions.Values[nextIndex])
                 end)
 
                 Options[Idx] = DropdownObj
-                if #Options.Values > 0 then
-                    DropdownObj:SetValue(Options.Values[1])
+                if #DropdownOptions.Values > 0 then
+                    DropdownObj:SetValue(DropdownOptions.Values[1])
                 end
 
                 return DropdownObj
@@ -1673,5 +1680,13 @@ end
 --// Initialize Library \\
 Library.Notify = Library.Notify
 Library.Toggle = Library.Toggle
+
+-- Ensure Options and Toggles are properly initialized
+if not Library.Options then
+    Library.Options = Options
+end
+if not Library.Toggles then
+    Library.Toggles = Toggles
+end
 
 return Library

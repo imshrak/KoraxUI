@@ -4,9 +4,9 @@
 -- Load the library from GitHub
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
 
--- Access the tables
-local Options = Library.Options
-local Toggles = Library.Toggles
+-- Access the tables (with error handling)
+local Options = Library.Options or {}
+local Toggles = Library.Toggles or {}
 
 -- Create the main window
 local Window = Library:CreateWindow({
