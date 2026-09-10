@@ -1682,7 +1682,7 @@ Library.Notify = Library.Notify
 Library.Toggle = Library.Toggle
 
 -- Ensure Options and Toggles are properly initialized
-Library.Options = Options
-Library.Toggles = Toggles
+Library.Options = Library.Options or Options
+Library.Toggles = Library.Toggles or Toggles
 
 return Library
