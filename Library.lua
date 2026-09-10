@@ -29,7 +29,7 @@ local Toggles = {}
 local Options = {}
 local Tooltips = {}
 
-local BaseURL = "https://raw.githubusercontent.com/imshrak/KoraxUI/main/"
+local BaseURL = "https://raw.githubusercontent.com/imshrak/KoraxUI/master/"
 local CustomImageManager = {}
 local CustomImageManagerAssets = {
     TransparencyTexture = {

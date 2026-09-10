@@ -2,7 +2,7 @@
 -- This demonstrates how to use the library with loadstring
 
 -- Load the library from GitHub
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/main/Library.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imshrak/KoraxUI/master/Library.lua"))()
 
 -- Access the tables (with error handling)
 local Options = Library.Options or {}
