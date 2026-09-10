@@ -1152,6 +1152,7 @@ function Library:CreateWindow(Info)
                 local Bar = New("TextButton", {
                     Active = not SliderInfo.Disabled,
                     AnchorPoint = Vector2.new(0, 1),
+                    AutoButtonColor = false,
                     BackgroundColor3 = "MainColor",
                     ClipsDescendants = true,
                     Position = UDim2.fromScale(0, 1),
@@ -1160,7 +1161,7 @@ function Library:CreateWindow(Info)
                     Parent = Holder,
                 })
                 AddCorner(Bar, CR / 2)
-                AddStroke(Bar)
+                local BarStroke = AddStroke(Bar)
 
                 local DisplayLabel = New("TextLabel", {
                     BackgroundTransparency = 1,
@@ -1203,6 +1204,7 @@ function Library:CreateWindow(Info)
                 function SliderObj:SetText(Text) SliderLabel.Text = Text end
 
                 local DraggingBar = false
+                local HoveringBar = false
                 local function UpdateSlider(Input)
                     local Scale = math.clamp(
                         (Input.Position.X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X, 0, 1
@@ -1215,6 +1217,21 @@ function Library:CreateWindow(Info)
                     if IsMouseInput(Input) and not SliderObj.Disabled then
                         DraggingBar = true
                         UpdateSlider(Input)
+                        BarStroke.Color = Library.Scheme.AccentColor
+                    end
+                end)
+
+                Bar.MouseEnter:Connect(function()
+                    HoveringBar = true
+                    if not DraggingBar and not SliderObj.Disabled then
+                        BarStroke.Color = Library.Scheme.AccentColor
+                    end
+                end)
+
+                Bar.MouseLeave:Connect(function()
+                    HoveringBar = false
+                    if not DraggingBar then
+                        BarStroke.Color = Library.Scheme.OutlineColor
                     end
                 end)
 
@@ -1225,7 +1242,14 @@ function Library:CreateWindow(Info)
                 end))
 
                 Library:GiveSignal(UserInputService.InputEnded:Connect(function(Input)
-                    if IsMouseInput(Input) then DraggingBar = false end
+                    if IsMouseInput(Input) and DraggingBar then
+                        DraggingBar = false
+                        if HoveringBar then
+                            BarStroke.Color = Library.Scheme.AccentColor
+                        else
+                            BarStroke.Color = Library.Scheme.OutlineColor
+                        end
+                    end
                 end))
 
                 Options[Idx] = SliderObj
