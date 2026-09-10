@@ -956,6 +956,7 @@ function Library:CreateWindow(Info)
                 local Switch = New("Frame", {
                     AnchorPoint = Vector2.new(1, 0),
                     BackgroundColor3 = "MainColor",
+                    ClipsDescendants = true,
                     Position = UDim2.fromScale(1, 0),
                     Size = UDim2.fromOffset(32, 18),
                     Parent = Button,
@@ -989,7 +990,7 @@ function Library:CreateWindow(Info)
 
                 function ToggleObj:SetValue(Value)
                     ToggleObj.Value = Value
-                    local TargetPos = Value and UDim2.new(1, -20, 0, 2) or UDim2.new(0, 2, 0, 2)
+                    local TargetPos = Value and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
                     TweenService:Create(Ball, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
                         Position = TargetPos,
                     }):Play()
@@ -1152,6 +1153,7 @@ function Library:CreateWindow(Info)
                     Active = not SliderInfo.Disabled,
                     AnchorPoint = Vector2.new(0, 1),
                     BackgroundColor3 = "MainColor",
+                    ClipsDescendants = true,
                     Position = UDim2.fromScale(0, 1),
                     Size = UDim2.new(1, 0, 0, 15),
                     Text = "",
@@ -1177,7 +1179,6 @@ function Library:CreateWindow(Info)
                     ZIndex = Bar.ZIndex + 1,
                     Parent = Bar,
                 })
-                AddCorner(Fill, CR / 2)
 
                 local SliderObj = {
                     Value = SliderInfo.Default,
